@@ -12,28 +12,19 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Code & Submodules
+      - name: Checkout Code
         uses: actions/checkout@v4
-        with:
-          submodules: 'recursive'
-          fetch-depth: 1
 
-      - name: Setup Emscripten Cache
-        uses: actions/cache@v4
+      - name: Setup Emscripten
+        uses: mymindstorm/setup-emsdk@v14 # The "Gold Standard" for 2026
         with:
-          path: emsdk/
-          key: ${{ runner.os }}-emsdk-${{ hashFiles('.gitmodules') }}
+          version: latest
 
-      - name: Initialize Emscripten
-        run: |
-          cd emsdk
-          ./emsdk install latest
-          ./emsdk activate latest
+      - name: Verify Files
+        run: ls -R # This logs exactly what the server sees to the terminal
 
       - name: Geometric Web Compilation
         run: |
-          source ./emsdk/emsdk_env.sh
-          # Optimizing for O3 (High Performance) to match silicon lanes
           emcc lattice_engine.cpp -o engine.js -O3 --bind -s WASM=1 -s ALLOW_MEMORY_GROWTH=1
 
       - name: Deploy to GitHub Pages
@@ -42,3 +33,4 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: .
           force_orphan: true
+          
