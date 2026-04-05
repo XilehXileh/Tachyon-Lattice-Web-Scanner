@@ -1,7 +1,6 @@
 name: Build Web Lattice
 on: [push]
 
-# This block is the critical fix for Exit Code 128
 permissions:
   contents: write
   pages: write
@@ -11,23 +10,24 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4 # Updated to v4
+      - uses: actions/checkout@v4
 
-      - name: Install Emscripten
+      - name: Install Emscripten (Direct)
         run: |
-          git clone https://github.com/emscripten-core/emsdk.git
-          cd emsdk
+          mkdir emsdk-repo
+          cd emsdk-repo
+          git clone --depth 1 https://github.com/emscripten-core/emsdk.git .
           ./emsdk install latest
           ./emsdk activate latest
 
       - name: Compile C++ to WASM
         run: |
-          source ./emsdk/emsdk_env.sh
+          source ./emsdk-repo/emsdk_env.sh
           emcc lattice_engine.cpp -o engine.js -O3 --bind -s WASM=1
 
       - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v4 # Updated to v4
+        uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: .
-          
+          force_orphan: true
