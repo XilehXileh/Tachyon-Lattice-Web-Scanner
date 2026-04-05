@@ -8,6 +8,10 @@ permissions:
   pages: write
   id-token: write
 
+# Force the runner to use the modern Node 24 lane
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -27,7 +31,6 @@ jobs:
       - name: Upload Website Files
         uses: actions/upload-pages-artifact@v3
         with:
-          # This grabs index.html, engine.js, and engine.wasm
           path: '.' 
 
   deploy:
