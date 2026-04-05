@@ -16,21 +16,27 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Setup Emscripten
-        uses: mymindstorm/setup-emsdk@v14 # The "Gold Standard" for 2026
+        uses: mymindstorm/setup-emsdk@v14
         with:
           version: latest
 
-      - name: Verify Files
-        run: ls -R # This logs exactly what the server sees to the terminal
-
-      - name: Geometric Web Compilation
+      - name: Compile Unified Lattice
         run: |
           emcc lattice_engine.cpp -o engine.js -O3 --bind -s WASM=1 -s ALLOW_MEMORY_GROWTH=1
 
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v4
+      - name: Upload Website Files
+        uses: actions/upload-pages-artifact@v3
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: .
-          force_orphan: true
-          
+          # This grabs index.html, engine.js, and engine.wasm
+          path: '.' 
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
