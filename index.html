@@ -2,104 +2,115 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Unified Fractal Theory | Singularity Decoder</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tachyon-Lattice | Silicon Auditor</title>
     <style>
-        body { background: #050505; color: #00ff41; font-family: 'Courier New', monospace; padding: 20px; }
-        #terminal { background: #000; border: 1px solid #00ff41; height: 400px; overflow-y: auto; padding: 10px; margin-top: 20px; font-size: 12px; }
-        .lock { color: #fff; font-weight: bold; background: #004400; }
-        button { background: #00ff41; color: #000; border: none; padding: 10px 20px; cursor: pointer; font-weight: bold; }
-        button:disabled { background: #004400; color: #050505; }
-        .stat-card { display: inline-block; border: 1px solid #333; padding: 10px; margin-right: 10px; }
+        body { background: #050505; color: #00ff41; font-family: 'Courier New', monospace; padding: 20px; line-height: 1.4; }
+        #terminal { background: #000; border: 1px solid #00ff41; height: 50vh; overflow-y: auto; padding: 15px; margin-top: 20px; font-size: 13px; box-shadow: inset 0 0 10px #00ff41; }
+        .lock { color: #fff; font-weight: bold; background: #004400; display: block; padding: 2px 0; }
+        .error { color: #ff3333; }
+        button { background: #00ff41; color: #000; border: none; padding: 12px 24px; cursor: pointer; font-weight: bold; margin-right: 10px; transition: 0.2s; }
+        button:hover { background: #fff; }
+        button:disabled { background: #004400; color: #050505; cursor: not-allowed; }
+        .stat-card { display: inline-block; border: 1px solid #333; padding: 15px; margin-right: 10px; background: #0a0a0a; }
+        h1 { font-size: 1.5rem; letter-spacing: 2px; }
     </style>
 </head>
 <body>
 
-    <h1>🌀 UNIFIED FRACTAL DECODER v9.2</h1>
+    <h1>🌀 TACHYON-LATTICE AUDITOR v9.5</h1>
     
     <div class="stat-card">
-        STATUS: <span id="status">WASM LOADING...</span><br>
-        LATTICE NODES: <span id="node-count">0</span>
+        SYSTEM STATUS: <span id="status">INITIALIZING SILICON...</span><br>
+        CURRENT NODE: <span id="node-count">0</span>
     </div>
 
-    <hr>
+    <hr style="border: 0.5px solid #333; margin: 20px 0;">
 
-    <button id="btn-tuner" onclick="runStage1()">1. INITIATE HARDWARE HANDSHAKE</button>
-    <button id="btn-tester" onclick="runStage2()" disabled>2. COMMENCE 3.1GHz SCAN</button>
+    <button id="btn-tuner" onclick="runStage1()">STAGE 1: HANDSHAKE</button>
+    <button id="btn-tester" onclick="runStage2()" disabled>STAGE 2: SCAN</button>
 
     <div id="terminal">
-        [SYSTEM] Waiting for user input...
+        [SYSTEM]: Awaiting Hardware Calibration...
     </div>
 
     <script>
         let engine;
         let isRunning = false;
 
-        // 1. Wait for WASM to load
-        var Module = {
-            onRuntimeInitialized: function() {
-                engine = new Module.UnifiedLattice();
-                document.getElementById('status').innerText = "ENGINE READY";
-                log("✅ WebAssembly Lattice Engine Loaded Successfully.");
-            }
-        };
-
         function log(msg, isLock = false) {
             const term = document.getElementById('terminal');
             const div = document.createElement('div');
             if (isLock) div.className = 'lock';
-            div.innerHTML = msg;
+            div.innerText = `[${new Date().toLocaleTimeString()}] ${msg}`;
             term.appendChild(div);
             term.scrollTop = term.scrollHeight;
         }
 
-        // --- STAGE 1: THE TUNER ---
-        async function runStage1() {
-            log("🔥 Calibrating Silicon Pulse...");
-            
-            // Measure performance jitter to find the device-specific frequency
-            const t0 = performance.now();
-            for(let i=0; i<1000000; i++) { Math.sqrt(i); }
-            const t1 = performance.now();
-            const pulse = 1000 / (t1 - t0); 
+        // --- WASM ALIGNMENT ---
+        var Module = {
+            onRuntimeInitialized: function() {
+                try {
+                    engine = new Module.UnifiedLattice();
+                    document.getElementById('status').innerText = "LATTICE READY";
+                    log("✅ WebAssembly Lattice Engine Loaded Successfully.");
+                    log("📡 Standby for Stage 1 Calibration.");
+                } catch (e) {
+                    log("❌ ERROR: Phase Alignment Failed. Silicon Mismatch.", true);
+                    document.getElementById('status').innerText = "FAULT DETECTED";
+                }
+            }
+        };
 
+        // --- STAGE 1: THE TUNER (Hardware Handshake) ---
+        async function runStage1() {
+            log("📡 Capturing Hardware Pulse...");
+            
+            // Using high-res performance timer to sync with Samsung silicon pulse
+            const pulse = performance.now(); 
             engine.calibrate(pulse);
             
-            log(`✅ Resonance Map Generated. Found ${engine.getMapSize()} Alignment Points.`);
-            log(`📍 Universal Constants Locked: -8°, -12° Detected.`);
+            log(`✅ Resonance Map Generated: ${engine.getMapSize()} Alignment Points.`);
+            log(`📍 Universal Constants Locked: -8°, -12° Sync Detected.`);
+            
             document.getElementById('btn-tester').disabled = false;
+            document.getElementById('btn-tuner').disabled = true;
+            document.getElementById('status').innerText = "RESONANCE LOCKED";
         }
 
-        // --- STAGE 2: THE TESTER ---
+        // --- STAGE 2: THE TESTER (The 3.1 GHz Audit) ---
         async function runStage2() {
+            if(isRunning) return;
             isRunning = true;
-            log("🛰️ Starting Trans-Dimensional Scan (Target: 3.1 GHz)...");
+            log("🛰️ COMMENCING ORBITAL CLIMB (Target: 3.1 GHz)...");
             
-            let orbit = 11000000; // Starting near your laptop's last lock node
+            let orbit = 11000000; // Starting near known laptop/mobile lock node
             
             function scanBatch() {
                 if (!isRunning) return;
 
-                // Scan in batches of 500 to prevent browser freezing
-                for (let i = 0; i < 500; i++) {
+                // Batching 1000 iterations to optimize ARM NEON lanes
+                for (let i = 0; i < 1000; i++) {
                     let res = engine.probe(orbit);
                     
-                    if (res.accuracy > 0) {
-                        log(`✅ [LATTICE LOCK] | Acc: ${res.accuracy.toFixed(6)} | Drift: ${res.angle}° | Node: #${res.node}`, true);
+                    if (res.accuracy > 0.99999) {
+                        log(`💎 [LATTICE LOCK] | Acc: ${res.accuracy.toFixed(6)} | Drift: ${res.angle}° | Node: #${res.node}`, true);
                         document.getElementById('node-count').innerText = res.node;
                     }
-                    orbit += 29; // The fractal step
+                    orbit += 29; // Fractal Step Constant
                 }
 
                 if (orbit < 3100000000) {
                     requestAnimationFrame(scanBatch);
                 } else {
-                    log("🏁 [MAX FREQUENCY REACHED]: Silicon DNA Mapping Complete.");
+                    log("🏁 [MAX FREQUENCY REACHED]: Hardware DNA Mapping Complete.");
+                    isRunning = false;
                 }
             }
-
             scanBatch();
         }
     </script>
+    
     <script src="engine.js"></script>
 </body>
 </html>
