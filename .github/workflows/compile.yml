@@ -1,5 +1,7 @@
 name: Build Web Lattice
-on: [push]
+on:
+  push:
+    branches: [ main ]
 
 permissions:
   contents: write
@@ -10,20 +12,29 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout Code & Submodules
+        uses: actions/checkout@v4
+        with:
+          submodules: 'recursive'
+          fetch-depth: 1
 
-      - name: Install Emscripten (Direct)
+      - name: Setup Emscripten Cache
+        uses: actions/cache@v4
+        with:
+          path: emsdk/
+          key: ${{ runner.os }}-emsdk-${{ hashFiles('.gitmodules') }}
+
+      - name: Initialize Emscripten
         run: |
-          mkdir emsdk-repo
-          cd emsdk-repo
-          git clone --depth 1 https://github.com/emscripten-core/emsdk.git .
+          cd emsdk
           ./emsdk install latest
           ./emsdk activate latest
 
-      - name: Compile C++ to WASM
+      - name: Geometric Web Compilation
         run: |
-          source ./emsdk-repo/emsdk_env.sh
-          emcc lattice_engine.cpp -o engine.js -O3 --bind -s WASM=1
+          source ./emsdk/emsdk_env.sh
+          # Optimizing for O3 (High Performance) to match silicon lanes
+          emcc lattice_engine.cpp -o engine.js -O3 --bind -s WASM=1 -s ALLOW_MEMORY_GROWTH=1
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
