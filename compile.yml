@@ -1,0 +1,26 @@
+name: Build Web Lattice
+on: [push] # Runs every time you upload code
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install Emscripten
+        run: |
+          git clone https://github.com/emscripten-core/emsdk.git
+          cd emsdk
+          ./emsdk install latest
+          ./emsdk activate latest
+
+      - name: Compile C++ to WASM
+        run: |
+          source ./emsdk/emsdk_env.sh
+          emcc lattice_engine.cpp -o engine.js -O3 --bind -s WASM=1
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: .
