@@ -1,5 +1,5 @@
-# 🌀 Tachyon-Lattice Web-Scanner
-**A Silicon-Level Diagnostic Tool based on Unified Fractal Theory**
+# 🌀 Tachyon Lattice Web Scanner
+**A Silicon Level Diagnostic Tool based on Unified Fractal Theory**
 
 This application utilizes **WebAssembly (WASM)** to port high-performance C++ orbital math directly into the browser. It is designed to audit the "Hardware Pulse" of your device's CPU to identify geometric singularities within a rhombic dodecahedral lattice.
 
